@@ -8,7 +8,7 @@
 | Файл | Назначение |
 | --- | --- |
 | `Rail-Logistics-Hub-Astana.pdf` | Готовая презентация, 37 слайдов, формат 16:9 |
-| `Rail-Logistics-Hub-Astana.pptx` | Редактируемая версия для PowerPoint / Google Slides |
+| `Rail-Logistics-Hub-Astana.pptx` | Версия для показа в PowerPoint / Google Slides |
 | `index.html` | Исходник презентации |
 | `assets/styles.css` | Оформление: типографика, палитра, компоненты |
 | `build.sh` | Сборка PDF из HTML через headless Chrome |
@@ -37,9 +37,18 @@ python3 build_pptx.py           # PPTX
 
 ## Как править содержание
 
-Слайды описаны обычной разметкой в `index.html`: каждый слайд — блок `<section class="slide">`.
-Классы оформления (`card`, `kpi`, `callout`, `bars`, `matrix`, `timeline`) описаны в `assets/styles.css`.
-После правок нужно пересобрать PDF командой `./build.sh`.
+Единственный источник содержания — `index.html`: каждый слайд представляет собой
+блок `<section class="slide">` с обычной разметкой. Классы оформления (`card`, `kpi`,
+`callout`, `bars`, `matrix`, `timeline`) описаны в `assets/styles.css`.
+
+После правки нужно пересобрать файлы:
+
+```bash
+./build.sh && python3 build_pptx.py
+```
+
+PPTX собирается из страниц PDF, то есть слайды в нём представлены изображениями:
+файл удобен для показа, но текст в нём не редактируется. Все правки вносятся в HTML.
 
 ## Замечание по данным
 
