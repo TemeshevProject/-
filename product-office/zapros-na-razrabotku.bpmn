@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_DevRequest" targetNamespace="http://sergek.group/product-office" exporter="Product Office">
+  <bpmn:collaboration id="Collaboration_DevRequest">
+    <bpmn:participant id="Participant_DevRequest" name="Запрос на разработку продукта" processRef="Process_DevRequest"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_DevRequest" name="Запрос на разработку" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_DevRequest">
+      <bpmn:lane id="Lane_init" name="Инициатор"><bpmn:flowNodeRef>Start_need</bpmn:flowNodeRef><bpmn:flowNodeRef>Start_b2b</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_incident</bpmn:flowNodeRef><bpmn:flowNodeRef>End_support</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_card</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_fill</bpmn:flowNodeRef><bpmn:flowNodeRef>Timer_fill</bpmn:flowNodeRef><bpmn:flowNodeRef>End_autoclose</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_accept</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_accept</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_drb" name="ДРБ"><bpmn:flowNodeRef>Task_drb</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_po" name="Product Office"><bpmn:flowNodeRef>Task_qualify</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_qual</bpmn:flowNodeRef><bpmn:flowNodeRef>End_reject_qual</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_pool</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_typec</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_fast_b</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_fast_c</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_split</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_value</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_join</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_reco</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_cpo</bpmn:flowNodeRef><bpmn:flowNodeRef>Timer_postpone</bpmn:flowNodeRef><bpmn:flowNodeRef>End_reject_cpo</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_level</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_cpo</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_jira</bpmn:flowNodeRef><bpmn:flowNodeRef>Timer_post</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_post</bpmn:flowNodeRef><bpmn:flowNodeRef>End_closed</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_st" name="Sergek Technologies"><bpmn:flowNodeRef>Task_cost</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_build</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_fin" name="Финансовый департамент"><bpmn:flowNodeRef>Task_fin</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_board" name="Продуктовый совет"><bpmn:flowNodeRef>Task_board</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_board</bpmn:flowNodeRef><bpmn:flowNodeRef>End_reject_board</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_ik" name="Инвестиционный комитет"><bpmn:flowNodeRef>Task_ik</bpmn:flowNodeRef><bpmn:flowNodeRef>Gw_ik</bpmn:flowNodeRef><bpmn:flowNodeRef>End_reject_ik</bpmn:flowNodeRef></bpmn:lane><bpmn:lane id="Lane_ceo" name="CEO"><bpmn:flowNodeRef>Task_order</bpmn:flowNodeRef></bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start_need" name="Потребность в разработке"/>
+    <bpmn:startEvent id="Start_b2b" name="Из процесса B2B"><bpmn:messageEventDefinition id="Msg_Start_b2b"/></bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gw_incident" name="Инцидент в продуктиве?"/>
+    <bpmn:endEvent id="End_support" name="В поддержку"/>
+    <bpmn:userTask id="Task_card" name="Карточка в Simbase"><bpmn:documentation>Статус «Черновик», затем «Зарегистрирован». Письмо, мессенджер и устное поручение не заменяют карточку. Обязательные поля блоков 0–3: что, зачем, как, источник финансирования, владелец со стороны бизнеса.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_fill" name="Дозаполнить поля"><bpmn:documentation>Статус «Нужны доп. данные». Инициатор дополняет карточку. Если за 5 рабочих дней поля не закрыты, карточка закрывается автоматически.</bpmn:documentation></bpmn:userTask>
+    <bpmn:boundaryEvent id="Timer_fill" name="5 рабочих дней" attachedToRef="Task_fill" cancelActivity="true"><bpmn:timerEventDefinition id="Def_Timer_fill"/></bpmn:boundaryEvent>
+    <bpmn:endEvent id="End_autoclose" name="Автозакрытие"/>
+    <bpmn:userTask id="Task_accept" name="Принять результат"><bpmn:documentation>Инициатор, 5 рабочих дней, статус «Выполнен».</bpmn:documentation></bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_accept" name="Принято?"/>
+    <bpmn:userTask id="Task_drb" name="Справка ДРБ до 15-го числа"><bpmn:documentation>До 15-го числа последнего месяца квартала: заказчики, регионы, бюджет, приоритет ДРБ, ссылки на карточки Simbase. Ответ Product Office по каждому пункту — не позже 2 недель.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_qualify" name="Квалификация запроса"><bpmn:documentation>Intake-координатор Product Office, 2 рабочих дня. Проверяет полноту и дубли, присваивает тип A–E и трек, назначает PM. Статус «Зарегистрирован».</bpmn:documentation></bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_qual" name="Итог квалификации"/>
+    <bpmn:userTask id="Task_pool" name="Квартальный пул"><bpmn:documentation>Типы A, D и E ждут квартальный цикл. Резерв 5–10% ёмкости держится под ускоренный трек.</bpmn:documentation></bpmn:userTask>
+    <bpmn:parallelGateway id="Gw_split" name=""/>
+    <bpmn:userTask id="Task_value" name="Ценность, экономика и балл"><bpmn:documentation>PM. Сначала стоп-факторы, затем балл 0–3 по шести критериям. P1 от 2,2, P2 1,5–2,2, P3 ниже 1,5 уходит в бэклог с датой пересмотра.</bpmn:documentation></bpmn:userTask>
+    <bpmn:parallelGateway id="Gw_join" name=""/>
+    <bpmn:userTask id="Task_reco" name="Материалы для CPO"></bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_cpo" name="Решение CPO"/>
+    <bpmn:exclusiveGateway id="Gw_level" name="Уровень утверждения"/>
+    <bpmn:userTask id="Task_cpo" name="Утвердить в пороге CPO"><bpmn:documentation>В проекте регламента рекомендован вариант C: до 15 млн тг и до 3 месяцев. Суммы не утверждены.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_jira" name="Эпик Jira с номером запроса"><bpmn:documentation>PM, 2 рабочих дня. Номер запроса Simbase обязателен в эпике. Задачу без номера команда не берёт.</bpmn:documentation></bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="Timer_post" name="3–6 мес. после релиза"><bpmn:timerEventDefinition id="Def_Timer_post"/></bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="Task_post" name="Пост-анализ"><bpmn:documentation>PM через 3–6 месяцев после релиза: факт выручки и использования против плана. Затем статус «Закрыт».</bpmn:documentation></bpmn:userTask>
+    <bpmn:endEvent id="End_closed" name="Закрыт"/>
+    <bpmn:exclusiveGateway id="Gw_typec" name="Тип C?"/>
+    <bpmn:userTask id="Task_fast_b" name="Оценить сделку, 5 р. дней"><bpmn:documentation>Тип B, ускоренный трек, 5 рабочих дней. PM и Sergek Technologies. Подтверждение: КП, ТС, тендер или гарантийное письмо.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_fast_c" name="Согласовать срок обязательства"><bpmn:documentation>Тип C. Решается срок исполнения, а не целесообразность. Подтверждение: договор, НПА или предписание. Трек ускоренный, утверждение всё равно по порогу.</bpmn:documentation></bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="Timer_postpone" name="До даты пересмотра"><bpmn:timerEventDefinition id="Def_Timer_postpone"/></bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="End_reject_qual" name="Отклонён"/>
+    <bpmn:endEvent id="End_reject_cpo" name="Отклонён"/>
+    <bpmn:userTask id="Task_cost" name="Оценить стоимость и срок"><bpmn:documentation>Sergek Technologies, R/A оценки. Полная стоимость: ФОТ × срок, оборудование, подрядчики, лицензии, сертификация. Срок анализа квартального трека — 10 рабочих дней от справки.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_build" name="Разработка, статус раз в месяц"><bpmn:documentation>Разработка силами Sergek Technologies. PM обновляет статус в Simbase раз в месяц. Перерасход больше 20% или сдвиг срока больше 30% возвращает запрос на тот же уровень утверждения.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_fin" name="Проверить финансирование"><bpmn:documentation>Финансовый департамент проверяет источник финансирования и экономику на горизонте 3 лет.</bpmn:documentation></bpmn:userTask>
+    <bpmn:userTask id="Task_board" name="Продуктовый совет"><bpmn:documentation>Промежуточный уровень между CPO и ИК. В проекте — 15–75 млн тг или срок до 6 месяцев. Создание совета ещё не решено.</bpmn:documentation></bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_board" name=""/>
+    <bpmn:endEvent id="End_reject_board" name="Отклонён"/>
+    <bpmn:userTask id="Task_ik" name="Инвестиционный комитет"><bpmn:documentation>Выше порога и всегда для особых категорий: новый продукт, hardware/АПК/Edge, инвестиционная разработка без заказчика больше 20 млн тг, срок больше 6 месяцев. Для ускоренного трека — внеочередное или заочное заседание.</bpmn:documentation></bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_ik" name=""/>
+    <bpmn:endEvent id="End_reject_ik" name="Отклонён"/>
+    <bpmn:userTask id="Task_order" name="Приказ CEO о запуске"><bpmn:documentation>Для уровня ИК: согласование Project office, ДУП и бухгалтерии, подпись CEO. Как в процессе продаж B2B.</bpmn:documentation></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_need" targetRef="Gw_incident"/><bpmn:sequenceFlow id="Flow_2" sourceRef="Start_b2b" targetRef="Task_card"/><bpmn:sequenceFlow id="Flow_3" sourceRef="Gw_incident" targetRef="End_support" name="да"/><bpmn:sequenceFlow id="Flow_4" sourceRef="Gw_incident" targetRef="Task_card" name="нет"/><bpmn:sequenceFlow id="Flow_5" sourceRef="Task_card" targetRef="Task_qualify"/><bpmn:sequenceFlow id="Flow_6" sourceRef="Task_qualify" targetRef="Gw_qual"/><bpmn:sequenceFlow id="Flow_7" sourceRef="Gw_qual" targetRef="Task_fill" name="не хватает полей"/><bpmn:sequenceFlow id="Flow_8" sourceRef="Task_fill" targetRef="Task_qualify" name="дозаполнено"/><bpmn:sequenceFlow id="Flow_9" sourceRef="Timer_fill" targetRef="End_autoclose" name="срок вышел"/><bpmn:sequenceFlow id="Flow_10" sourceRef="Gw_qual" targetRef="End_reject_qual" name="дубль или стоп-фактор"/><bpmn:sequenceFlow id="Flow_11" sourceRef="Gw_qual" targetRef="Task_pool" name="A, D, E"/><bpmn:sequenceFlow id="Flow_12" sourceRef="Gw_qual" targetRef="Gw_typec" name="B или C"/><bpmn:sequenceFlow id="Flow_13" sourceRef="Task_pool" targetRef="Task_drb"/><bpmn:sequenceFlow id="Flow_14" sourceRef="Task_drb" targetRef="Gw_split"/><bpmn:sequenceFlow id="Flow_15" sourceRef="Gw_split" targetRef="Task_value"/><bpmn:sequenceFlow id="Flow_16" sourceRef="Gw_split" targetRef="Task_cost"/><bpmn:sequenceFlow id="Flow_17" sourceRef="Gw_split" targetRef="Task_fin"/><bpmn:sequenceFlow id="Flow_18" sourceRef="Task_value" targetRef="Gw_join"/><bpmn:sequenceFlow id="Flow_19" sourceRef="Task_cost" targetRef="Gw_join"/><bpmn:sequenceFlow id="Flow_20" sourceRef="Task_fin" targetRef="Gw_join"/><bpmn:sequenceFlow id="Flow_21" sourceRef="Gw_join" targetRef="Task_reco"/><bpmn:sequenceFlow id="Flow_22" sourceRef="Gw_typec" targetRef="Task_fast_c" name="обязательство"/><bpmn:sequenceFlow id="Flow_23" sourceRef="Gw_typec" targetRef="Task_fast_b" name="сделка"/><bpmn:sequenceFlow id="Flow_24" sourceRef="Task_fast_c" targetRef="Task_reco"/><bpmn:sequenceFlow id="Flow_25" sourceRef="Task_fast_b" targetRef="Task_reco"/><bpmn:sequenceFlow id="Flow_26" sourceRef="Task_reco" targetRef="Gw_cpo"/><bpmn:sequenceFlow id="Flow_27" sourceRef="Gw_cpo" targetRef="Task_fill" name="нужны данные"/><bpmn:sequenceFlow id="Flow_28" sourceRef="Gw_cpo" targetRef="End_reject_cpo" name="отклонить"/><bpmn:sequenceFlow id="Flow_29" sourceRef="Gw_cpo" targetRef="Timer_postpone" name="отложить"/><bpmn:sequenceFlow id="Flow_30" sourceRef="Timer_postpone" targetRef="Task_pool"/><bpmn:sequenceFlow id="Flow_31" sourceRef="Gw_cpo" targetRef="Gw_level" name="на утверждение"/><bpmn:sequenceFlow id="Flow_32" sourceRef="Gw_level" targetRef="Task_cpo" name="порог CPO"/><bpmn:sequenceFlow id="Flow_33" sourceRef="Gw_level" targetRef="Task_board" name="Продсовет"/><bpmn:sequenceFlow id="Flow_34" sourceRef="Gw_level" targetRef="Task_ik" name="ИК"/><bpmn:sequenceFlow id="Flow_35" sourceRef="Task_cpo" targetRef="Task_jira"/><bpmn:sequenceFlow id="Flow_36" sourceRef="Task_board" targetRef="Gw_board"/><bpmn:sequenceFlow id="Flow_37" sourceRef="Gw_board" targetRef="Task_jira" name="утверждён"/><bpmn:sequenceFlow id="Flow_38" sourceRef="Gw_board" targetRef="End_reject_board" name="отклонён"/><bpmn:sequenceFlow id="Flow_39" sourceRef="Task_ik" targetRef="Gw_ik"/><bpmn:sequenceFlow id="Flow_40" sourceRef="Gw_ik" targetRef="Task_order" name="утверждён"/><bpmn:sequenceFlow id="Flow_41" sourceRef="Gw_ik" targetRef="End_reject_ik" name="отклонён"/><bpmn:sequenceFlow id="Flow_42" sourceRef="Task_order" targetRef="Task_jira"/><bpmn:sequenceFlow id="Flow_43" sourceRef="Task_jira" targetRef="Task_build"/><bpmn:sequenceFlow id="Flow_44" sourceRef="Task_build" targetRef="Task_accept"/><bpmn:sequenceFlow id="Flow_45" sourceRef="Task_accept" targetRef="Gw_accept"/><bpmn:sequenceFlow id="Flow_46" sourceRef="Gw_accept" targetRef="Task_build" name="замечания"/><bpmn:sequenceFlow id="Flow_47" sourceRef="Gw_accept" targetRef="Timer_post" name="принято"/><bpmn:sequenceFlow id="Flow_48" sourceRef="Timer_post" targetRef="Task_post"/><bpmn:sequenceFlow id="Flow_49" sourceRef="Task_post" targetRef="End_closed"/>
+    <bpmn:textAnnotation id="Note_stop">
+      <bpmn:text>Стоп-факторы: продукт в категории «Закрытие»; нет источника финансирования; нет владельца со стороны бизнеса; функция уже есть или закрывается конфигурацией, партнёром, интеграцией.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_stop" sourceRef="Task_qualify" targetRef="Note_stop"/>
+    <bpmn:textAnnotation id="Note_threshold">
+      <bpmn:text>Пороги на схеме — рекомендованный вариант C, он ещё не утверждён: CPO до 15 млн тг и 3 мес.; Продсовет 15–75 млн или до 6 мес.; ИК выше 75 млн и особые категории.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_threshold" sourceRef="Gw_level" targetRef="Note_threshold"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_DevRequest">
+    <bpmndi:BPMNPlane id="Plane_DevRequest" bpmnElement="Collaboration_DevRequest">
+      <bpmndi:BPMNShape id="Shape_Participant" bpmnElement="Participant_DevRequest" isHorizontal="true">
+        <dc:Bounds x="40" y="56" width="4390" height="1880"/>
+      </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Shape_Lane_init" bpmnElement="Lane_init" isHorizontal="true">
+        <dc:Bounds x="70" y="56" width="4360" height="320"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_drb" bpmnElement="Lane_drb" isHorizontal="true">
+        <dc:Bounds x="70" y="376" width="4360" height="180"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_po" bpmnElement="Lane_po" isHorizontal="true">
+        <dc:Bounds x="70" y="556" width="4360" height="520"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_st" bpmnElement="Lane_st" isHorizontal="true">
+        <dc:Bounds x="70" y="1076" width="4360" height="180"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_fin" bpmnElement="Lane_fin" isHorizontal="true">
+        <dc:Bounds x="70" y="1256" width="4360" height="160"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_board" bpmnElement="Lane_board" isHorizontal="true">
+        <dc:Bounds x="70" y="1416" width="4360" height="180"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_ik" bpmnElement="Lane_ik" isHorizontal="true">
+        <dc:Bounds x="70" y="1596" width="4360" height="180"/>
+      </bpmndi:BPMNShape>      <bpmndi:BPMNShape id="Shape_Lane_ceo" bpmnElement="Lane_ceo" isHorizontal="true">
+        <dc:Bounds x="70" y="1776" width="4360" height="160"/>
+      </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Shape_Start_need" bpmnElement="Start_need">
+        <dc:Bounds x="120" y="150" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="80" y="190" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Start_b2b" bpmnElement="Start_b2b">
+        <dc:Bounds x="120" y="250" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="80" y="290" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_incident" bpmnElement="Gw_incident">
+        <dc:Bounds x="230" y="168" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="190" y="222" width="130" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_support" bpmnElement="End_support">
+        <dc:Bounds x="237" y="280" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="197" y="320" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_card" bpmnElement="Task_card">
+        <dc:Bounds x="340" y="155" width="180" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_fill" bpmnElement="Task_fill">
+        <dc:Bounds x="620" y="155" width="170" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Timer_fill" bpmnElement="Timer_fill">
+        <dc:Bounds x="754" y="213" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="714" y="253" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_autoclose" bpmnElement="End_autoclose">
+        <dc:Bounds x="850" y="175" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="810" y="215" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_accept" bpmnElement="Task_accept">
+        <dc:Bounds x="3600" y="155" width="180" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_accept" bpmnElement="Gw_accept">
+        <dc:Bounds x="3840" y="168" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3800" y="222" width="130" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_drb" bpmnElement="Task_drb">
+        <dc:Bounds x="1180" y="400" width="220" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_qualify" bpmnElement="Task_qualify">
+        <dc:Bounds x="600" y="620" width="200" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_qual" bpmnElement="Gw_qual">
+        <dc:Bounds x="860" y="635" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="689" width="130" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_pool" bpmnElement="Task_pool">
+        <dc:Bounds x="980" y="620" width="170" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_split" bpmnElement="Gw_split">
+        <dc:Bounds x="1480" y="633" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_value" bpmnElement="Task_value">
+        <dc:Bounds x="1600" y="620" width="210" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_join" bpmnElement="Gw_join">
+        <dc:Bounds x="1880" y="633" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_reco" bpmnElement="Task_reco">
+        <dc:Bounds x="2000" y="620" width="180" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_cpo" bpmnElement="Gw_cpo">
+        <dc:Bounds x="2240" y="633" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2200" y="687" width="130" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_level" bpmnElement="Gw_level">
+        <dc:Bounds x="2380" y="633" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2340" y="687" width="130" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_cpo" bpmnElement="Task_cpo">
+        <dc:Bounds x="2520" y="620" width="200" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_jira" bpmnElement="Task_jira">
+        <dc:Bounds x="2920" y="620" width="220" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Timer_post" bpmnElement="Timer_post">
+        <dc:Bounds x="3920" y="640" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3880" y="680" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_post" bpmnElement="Task_post">
+        <dc:Bounds x="4040" y="620" width="160" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_closed" bpmnElement="End_closed">
+        <dc:Bounds x="4260" y="640" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4220" y="680" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_typec" bpmnElement="Gw_typec">
+        <dc:Bounds x="900" y="820" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="860" y="874" width="130" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_fast_b" bpmnElement="Task_fast_b">
+        <dc:Bounds x="1040" y="760" width="210" height="72"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_fast_c" bpmnElement="Task_fast_c">
+        <dc:Bounds x="1040" y="870" width="230" height="72"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Timer_postpone" bpmnElement="Timer_postpone">
+        <dc:Bounds x="2247" y="820" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2207" y="860" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_reject_qual" bpmnElement="End_reject_qual">
+        <dc:Bounds x="867" y="900" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="827" y="940" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_reject_cpo" bpmnElement="End_reject_cpo">
+        <dc:Bounds x="2247" y="900" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2207" y="940" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_cost" bpmnElement="Task_cost">
+        <dc:Bounds x="1600" y="1080" width="210" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_build" bpmnElement="Task_build">
+        <dc:Bounds x="2920" y="1080" width="240" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_fin" bpmnElement="Task_fin">
+        <dc:Bounds x="1600" y="1260" width="220" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_board" bpmnElement="Task_board">
+        <dc:Bounds x="2520" y="1440" width="190" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_board" bpmnElement="Gw_board">
+        <dc:Bounds x="2780" y="1453" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_reject_board" bpmnElement="End_reject_board">
+        <dc:Bounds x="2787" y="1540" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2747" y="1580" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ik" bpmnElement="Task_ik">
+        <dc:Bounds x="2520" y="1640" width="220" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gw_ik" bpmnElement="Gw_ik">
+        <dc:Bounds x="2800" y="1653" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_reject_ik" bpmnElement="End_reject_ik">
+        <dc:Bounds x="2807" y="1740" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2767" y="1780" width="116" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_order" bpmnElement="Task_order">
+        <dc:Bounds x="2920" y="1820" width="200" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Note_stop" bpmnElement="Note_stop">
+        <dc:Bounds x="1280" y="960" width="300" height="90"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Note_threshold" bpmnElement="Note_threshold">
+        <dc:Bounds x="2520" y="820" width="300" height="100"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Assoc_stop" bpmnElement="Assoc_stop">
+        <di:waypoint x="760" y="700"/>
+        <di:waypoint x="1280" y="1000"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Assoc_threshold" bpmnElement="Assoc_threshold">
+        <di:waypoint x="2405" y="683"/>
+        <di:waypoint x="2600" y="820"/>
+      </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Edge_Flow_1" bpmnElement="Flow_1">
+        <di:waypoint x="138" y="168"/>
+        <di:waypoint x="255" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_2" bpmnElement="Flow_2">
+        <di:waypoint x="138" y="268"/>
+        <di:waypoint x="138" y="330"/>
+        <di:waypoint x="520" y="330"/>
+        <di:waypoint x="520" y="193"/>
+        <di:waypoint x="430" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_3" bpmnElement="Flow_3">
+        <di:waypoint x="255" y="193"/>
+        <di:waypoint x="255" y="193"/>
+        <di:waypoint x="255" y="298"/>
+        <di:waypoint x="255" y="298"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_4" bpmnElement="Flow_4">
+        <di:waypoint x="255" y="193"/>
+        <di:waypoint x="430" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_5" bpmnElement="Flow_5">
+        <di:waypoint x="430" y="193"/>
+        <di:waypoint x="565" y="193"/>
+        <di:waypoint x="565" y="660"/>
+        <di:waypoint x="700" y="660"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_6" bpmnElement="Flow_6">
+        <di:waypoint x="700" y="660"/>
+        <di:waypoint x="885" y="660"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_7" bpmnElement="Flow_7">
+        <di:waypoint x="885" y="660"/>
+        <di:waypoint x="795" y="660"/>
+        <di:waypoint x="795" y="193"/>
+        <di:waypoint x="705" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_8" bpmnElement="Flow_8">
+        <di:waypoint x="705" y="193"/>
+        <di:waypoint x="705" y="80"/>
+        <di:waypoint x="700" y="80"/>
+        <di:waypoint x="700" y="660"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_9" bpmnElement="Flow_9">
+        <di:waypoint x="772" y="231"/>
+        <di:waypoint x="820" y="231"/>
+        <di:waypoint x="820" y="193"/>
+        <di:waypoint x="868" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_10" bpmnElement="Flow_10">
+        <di:waypoint x="885" y="660"/>
+        <di:waypoint x="885" y="660"/>
+        <di:waypoint x="885" y="918"/>
+        <di:waypoint x="885" y="918"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_11" bpmnElement="Flow_11">
+        <di:waypoint x="885" y="660"/>
+        <di:waypoint x="1065" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_12" bpmnElement="Flow_12">
+        <di:waypoint x="885" y="660"/>
+        <di:waypoint x="905" y="660"/>
+        <di:waypoint x="905" y="845"/>
+        <di:waypoint x="925" y="845"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_13" bpmnElement="Flow_13">
+        <di:waypoint x="1065" y="658"/>
+        <di:waypoint x="1177" y="658"/>
+        <di:waypoint x="1177" y="440"/>
+        <di:waypoint x="1290" y="440"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_14" bpmnElement="Flow_14">
+        <di:waypoint x="1290" y="440"/>
+        <di:waypoint x="1397" y="440"/>
+        <di:waypoint x="1397" y="658"/>
+        <di:waypoint x="1505" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_15" bpmnElement="Flow_15">
+        <di:waypoint x="1505" y="658"/>
+        <di:waypoint x="1705" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_16" bpmnElement="Flow_16">
+        <di:waypoint x="1505" y="658"/>
+        <di:waypoint x="1605" y="658"/>
+        <di:waypoint x="1605" y="1118"/>
+        <di:waypoint x="1705" y="1118"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_17" bpmnElement="Flow_17">
+        <di:waypoint x="1505" y="658"/>
+        <di:waypoint x="1607" y="658"/>
+        <di:waypoint x="1607" y="1298"/>
+        <di:waypoint x="1710" y="1298"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_18" bpmnElement="Flow_18">
+        <di:waypoint x="1705" y="658"/>
+        <di:waypoint x="1905" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_19" bpmnElement="Flow_19">
+        <di:waypoint x="1705" y="1118"/>
+        <di:waypoint x="1805" y="1118"/>
+        <di:waypoint x="1805" y="658"/>
+        <di:waypoint x="1905" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_20" bpmnElement="Flow_20">
+        <di:waypoint x="1710" y="1298"/>
+        <di:waypoint x="1807" y="1298"/>
+        <di:waypoint x="1807" y="658"/>
+        <di:waypoint x="1905" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_21" bpmnElement="Flow_21">
+        <di:waypoint x="1905" y="658"/>
+        <di:waypoint x="2090" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_22" bpmnElement="Flow_22">
+        <di:waypoint x="925" y="845"/>
+        <di:waypoint x="1040" y="845"/>
+        <di:waypoint x="1040" y="906"/>
+        <di:waypoint x="1155" y="906"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_23" bpmnElement="Flow_23">
+        <di:waypoint x="925" y="845"/>
+        <di:waypoint x="1035" y="845"/>
+        <di:waypoint x="1035" y="796"/>
+        <di:waypoint x="1145" y="796"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_24" bpmnElement="Flow_24">
+        <di:waypoint x="1155" y="906"/>
+        <di:waypoint x="1622" y="906"/>
+        <di:waypoint x="1622" y="658"/>
+        <di:waypoint x="2090" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_25" bpmnElement="Flow_25">
+        <di:waypoint x="1145" y="796"/>
+        <di:waypoint x="1617" y="796"/>
+        <di:waypoint x="1617" y="658"/>
+        <di:waypoint x="2090" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_26" bpmnElement="Flow_26">
+        <di:waypoint x="2090" y="658"/>
+        <di:waypoint x="2265" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_27" bpmnElement="Flow_27">
+        <di:waypoint x="2265" y="658"/>
+        <di:waypoint x="2265" y="100"/>
+        <di:waypoint x="705" y="100"/>
+        <di:waypoint x="705" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_28" bpmnElement="Flow_28">
+        <di:waypoint x="2265" y="658"/>
+        <di:waypoint x="2265" y="658"/>
+        <di:waypoint x="2265" y="918"/>
+        <di:waypoint x="2265" y="918"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_29" bpmnElement="Flow_29">
+        <di:waypoint x="2265" y="658"/>
+        <di:waypoint x="2265" y="658"/>
+        <di:waypoint x="2265" y="838"/>
+        <di:waypoint x="2265" y="838"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_30" bpmnElement="Flow_30">
+        <di:waypoint x="2265" y="838"/>
+        <di:waypoint x="2265" y="980"/>
+        <di:waypoint x="1065" y="980"/>
+        <di:waypoint x="1065" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_31" bpmnElement="Flow_31">
+        <di:waypoint x="2265" y="658"/>
+        <di:waypoint x="2405" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_32" bpmnElement="Flow_32">
+        <di:waypoint x="2405" y="658"/>
+        <di:waypoint x="2620" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_33" bpmnElement="Flow_33">
+        <di:waypoint x="2405" y="658"/>
+        <di:waypoint x="2510" y="658"/>
+        <di:waypoint x="2510" y="1478"/>
+        <di:waypoint x="2615" y="1478"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_34" bpmnElement="Flow_34">
+        <di:waypoint x="2405" y="658"/>
+        <di:waypoint x="2517" y="658"/>
+        <di:waypoint x="2517" y="1678"/>
+        <di:waypoint x="2630" y="1678"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_35" bpmnElement="Flow_35">
+        <di:waypoint x="2620" y="658"/>
+        <di:waypoint x="3030" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_36" bpmnElement="Flow_36">
+        <di:waypoint x="2615" y="1478"/>
+        <di:waypoint x="2805" y="1478"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_37" bpmnElement="Flow_37">
+        <di:waypoint x="2805" y="1478"/>
+        <di:waypoint x="2917" y="1478"/>
+        <di:waypoint x="2917" y="658"/>
+        <di:waypoint x="3030" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_38" bpmnElement="Flow_38">
+        <di:waypoint x="2805" y="1478"/>
+        <di:waypoint x="2805" y="1478"/>
+        <di:waypoint x="2805" y="1558"/>
+        <di:waypoint x="2805" y="1558"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_39" bpmnElement="Flow_39">
+        <di:waypoint x="2630" y="1678"/>
+        <di:waypoint x="2825" y="1678"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_40" bpmnElement="Flow_40">
+        <di:waypoint x="2825" y="1678"/>
+        <di:waypoint x="2922" y="1678"/>
+        <di:waypoint x="2922" y="1858"/>
+        <di:waypoint x="3020" y="1858"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_41" bpmnElement="Flow_41">
+        <di:waypoint x="2825" y="1678"/>
+        <di:waypoint x="2825" y="1678"/>
+        <di:waypoint x="2825" y="1758"/>
+        <di:waypoint x="2825" y="1758"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_42" bpmnElement="Flow_42">
+        <di:waypoint x="3020" y="1858"/>
+        <di:waypoint x="3025" y="1858"/>
+        <di:waypoint x="3025" y="658"/>
+        <di:waypoint x="3030" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_43" bpmnElement="Flow_43">
+        <di:waypoint x="3030" y="658"/>
+        <di:waypoint x="3035" y="658"/>
+        <di:waypoint x="3035" y="1118"/>
+        <di:waypoint x="3040" y="1118"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_44" bpmnElement="Flow_44">
+        <di:waypoint x="3040" y="1118"/>
+        <di:waypoint x="3365" y="1118"/>
+        <di:waypoint x="3365" y="193"/>
+        <di:waypoint x="3690" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_45" bpmnElement="Flow_45">
+        <di:waypoint x="3690" y="193"/>
+        <di:waypoint x="3865" y="193"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_46" bpmnElement="Flow_46">
+        <di:waypoint x="3865" y="193"/>
+        <di:waypoint x="3865" y="120"/>
+        <di:waypoint x="3040" y="120"/>
+        <di:waypoint x="3040" y="1118"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_47" bpmnElement="Flow_47">
+        <di:waypoint x="3865" y="193"/>
+        <di:waypoint x="3901" y="193"/>
+        <di:waypoint x="3901" y="658"/>
+        <di:waypoint x="3938" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_48" bpmnElement="Flow_48">
+        <di:waypoint x="3938" y="658"/>
+        <di:waypoint x="4120" y="658"/>
+      </bpmndi:BPMNEdge>      <bpmndi:BPMNEdge id="Edge_Flow_49" bpmnElement="Flow_49">
+        <di:waypoint x="4120" y="658"/>
+        <di:waypoint x="4278" y="658"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
